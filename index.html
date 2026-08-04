@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102a2e">
+    <meta
+      name="description"
+      content="Toxiclassify is a course project comparing classical and neural models for multilabel toxic comment classification."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Toxiclassify">
+    <meta
+      property="og:description"
+      content="Six-label toxic comment classification with TF-IDF, a 1D CNN, LightGBM, and ensembling."
+    >
+    <meta property="og:url" content="https://toxiclassify.github.io/">
+    <meta name="twitter:card" content="summary">
+    <link rel="canonical" href="https://toxiclassify.github.io/">
+    <link rel="stylesheet" href="styles.css">
+    <title>Toxiclassify | Toxic comment classification</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to the project</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Toxiclassify home">
+        <span class="brand-mark" aria-hidden="true">tx</span>
+        <span>toxiclassify</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#approach">Approach</a>
+        <a href="#results">Results</a>
+        <a href="#team">Team</a>
+        <a class="nav-code" href="https://github.com/toxiclassify/Main">View code</a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">Group 9 machine learning project, 2025</p>
+          <h1>Classifying toxic comments across six labels</h1>
+          <p class="hero-lead">
+            We studied how linear text models and a small neural network respond to severe label imbalance in the Jigsaw Toxic Comment dataset. The best result came from averaging Logistic Regression and CNN probabilities.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://github.com/toxiclassify/Main">Explore the repository</a>
+            <a class="button button-secondary" href="https://github.com/toxiclassify/Main/blob/main/report/toxic_comment_classification_report.pdf">Read the report</a>
+          </div>
+        </div>
+
+        <aside class="score-card" aria-labelledby="best-score-title">
+          <div class="score-orbit" aria-hidden="true">
+            <div class="score-center">
+              <strong>0.9816</strong>
+              <span>ROC-AUC</span>
+            </div>
+          </div>
+          <div>
+            <p class="score-label" id="best-score-title">Best validation score</p>
+            <p class="score-detail">Logistic Regression + 1D CNN</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="project-facts" aria-label="Dataset summary">
+        <div><strong>159,571</strong><span>training comments</span></div>
+        <div><strong>6</strong><span>independent labels</span></div>
+        <div><strong>0.30%</strong><span>comments labeled threat</span></div>
+        <div><strong>5</strong><span>model families compared</span></div>
+      </section>
+
+      <section class="section challenge" id="approach">
+        <div class="section-heading">
+          <p class="eyebrow">The problem</p>
+          <h2>Accuracy hides the cases that matter</h2>
+        </div>
+        <div class="challenge-grid">
+          <p class="section-intro">
+            Toxic comments are uncommon, and some categories are rare enough that an all-negative classifier still appears accurate. We centered evaluation on ROC-AUC, then examined per-label errors and tuned thresholds against F1.
+          </p>
+          <div class="imbalance-panel" aria-label="Selected label frequencies">
+            <div class="frequency">
+              <div class="frequency-label"><span>Toxic</span><strong>9.58%</strong></div>
+              <div class="frequency-track"><span style="width: 95.8%"></span></div>
+            </div>
+            <div class="frequency">
+              <div class="frequency-label"><span>Identity hate</span><strong>0.88%</strong></div>
+              <div class="frequency-track"><span style="width: 8.8%"></span></div>
+            </div>
+            <div class="frequency">
+              <div class="frequency-label"><span>Threat</span><strong>0.30%</strong></div>
+              <div class="frequency-track"><span style="width: 3%"></span></div>
+            </div>
+            <p>Bar widths use a 10% reference scale.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section method-section" aria-labelledby="method-title">
+        <div class="section-heading compact">
+          <p class="eyebrow">Method</p>
+          <h2 id="method-title">Two text pipelines, one comparison</h2>
+        </div>
+        <ol class="method-grid">
+          <li>
+            <span class="step-number">01</span>
+            <h3>Explore</h3>
+            <p>Measure label frequency, co-occurrence, comment length, and data quality.</p>
+          </li>
+          <li>
+            <span class="step-number">02</span>
+            <h3>Represent</h3>
+            <p>Create TF-IDF unigrams and bigrams for classical models, plus padded token sequences for the CNN.</p>
+          </li>
+          <li>
+            <span class="step-number">03</span>
+            <h3>Compare</h3>
+            <p>Test Logistic Regression, Linear SVM, Random Forest, LightGBM, and a 1D CNN.</p>
+          </li>
+          <li>
+            <span class="step-number">04</span>
+            <h3>Combine</h3>
+            <p>Average linear and neural probabilities, then tune decision thresholds for each label.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section results-section" id="results">
+        <div class="section-heading results-heading">
+          <div>
+            <p class="eyebrow">Recorded validation results</p>
+            <h2>Different models exposed the structure of the task</h2>
+          </div>
+          <p>
+            The sparse linear baseline matched the CNN. Their errors differed enough that simple probability averaging raised mean ROC-AUC to 0.9816.
+          </p>
+        </div>
+
+        <div class="results-layout">
+          <div
+            class="model-chart"
+            role="img"
+            aria-label="Mean ROC-AUC by model: Logistic Regression 0.9777, Linear SVM 0.9668, Random Forest 0.9441, CNN 0.9780, LightGBM 0.9604, and ensemble 0.9816."
+          >
+            <div class="chart-row">
+              <span class="model-name">Logistic Regression</span>
+              <div class="bar-track"><span class="bar" style="--score: 77.7%"></span></div>
+              <strong>0.9777</strong>
+            </div>
+            <div class="chart-row">
+              <span class="model-name">Linear SVM</span>
+              <div class="bar-track"><span class="bar" style="--score: 66.8%"></span></div>
+              <strong>0.9668</strong>
+            </div>
+            <div class="chart-row">
+              <span class="model-name">Random Forest</span>
+              <div class="bar-track"><span class="bar" style="--score: 44.1%"></span></div>
+              <strong>0.9441</strong>
+            </div>
+            <div class="chart-row">
+              <span class="model-name">1D CNN</span>
+              <div class="bar-track"><span class="bar" style="--score: 78%"></span></div>
+              <strong>0.9780</strong>
+            </div>
+            <div class="chart-row">
+              <span class="model-name">LightGBM</span>
+              <div class="bar-track"><span class="bar" style="--score: 60.4%"></span></div>
+              <strong>0.9604</strong>
+            </div>
+            <div class="chart-row best">
+              <span class="model-name">Ensemble</span>
+              <div class="bar-track"><span class="bar" style="--score: 81.6%"></span></div>
+              <strong>0.9816</strong>
+            </div>
+            <div class="chart-axis" aria-hidden="true">
+              <span>0.90</span><span>0.95</span><span>1.00</span>
+            </div>
+          </div>
+
+          <aside class="finding-card">
+            <p class="finding-number">+0.0039</p>
+            <h3>Ensemble gain over Logistic Regression</h3>
+            <p>
+              Linear features capture global word evidence. Convolution filters capture local word-order patterns. The average keeps both signals without a learned stacking layer.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section decisions-section">
+        <div class="section-heading compact">
+          <p class="eyebrow">What we learned</p>
+          <h2>Model choice followed the data</h2>
+        </div>
+        <div class="decision-grid">
+          <article>
+            <span>01</span>
+            <h3>Sparse text favored linear decision boundaries</h3>
+            <p>Logistic Regression beat Random Forest by more than three ROC-AUC points.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Rare labels required separate attention</h3>
+            <p>Threat and identity hate needed per-label error checks instead of a single global accuracy score.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Model diversity mattered more than model size</h3>
+            <p>A direct average of two different predictors produced the best recorded result.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section team-section" id="team">
+        <div class="section-heading team-heading">
+          <div>
+            <p class="eyebrow">Project Group 9</p>
+            <h2>Built by three classmates</h2>
+          </div>
+          <p>We split implementation work by experiment area and made the main pipeline decisions together.</p>
+        </div>
+        <div class="team-grid">
+          <article class="person-card">
+            <span class="initials" aria-hidden="true">RK</span>
+            <h3>Reyhane Kharazmipour</h3>
+            <p>Data exploration, preprocessing, and baseline models</p>
+          </article>
+          <article class="person-card">
+            <span class="initials" aria-hidden="true">HM</span>
+            <h3>Helia Mirsoofian</h3>
+            <p>Cross-validation, learning curves, and ensemble design</p>
+          </article>
+          <article class="person-card">
+            <span class="initials" aria-hidden="true">IM</span>
+            <h3>Iman Mohammadi</h3>
+            <p>CNN and LightGBM models, error analysis, and threshold tuning</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section resources-section" aria-labelledby="resources-title">
+        <div>
+          <p class="eyebrow">Reproduce the work</p>
+          <h2 id="resources-title">Code, notebook, and report</h2>
+          <p>The main repository includes a tested command-line baseline and the course artifacts used to record these results.</p>
+        </div>
+        <div class="resource-links">
+          <a href="https://github.com/toxiclassify/Main">
+            <span>Source repository</span>
+            <strong>Browse the code</strong>
+          </a>
+          <a href="https://github.com/toxiclassify/Main/blob/main/notebooks/toxic_comment_classification.ipynb">
+            <span>Course notebook</span>
+            <strong>Follow the experiments</strong>
+          </a>
+          <a href="https://github.com/toxiclassify/Main/blob/main/report/toxic_comment_classification_report.pdf">
+            <span>Project report</span>
+            <strong>Read the analysis</strong>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Toxiclassify, a 2025 machine learning course project.</p>
+      <a href="https://github.com/toxiclassify">GitHub organization</a>
+    </footer>
+  </body>
+</html>
