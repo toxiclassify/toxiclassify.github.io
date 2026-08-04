@@ -4,6 +4,12 @@ This repository serves the public project page at [toxiclassify.github.io](https
 
 The page uses plain HTML and CSS so GitHub Pages can publish it without a build step or third-party runtime.
 
+The figures in `assets/figures` are generated from the recorded notebook values. Recreate them with:
+
+```powershell
+python scripts\generate_figures.py
+```
+
 To preview it locally:
 
 ```powershell

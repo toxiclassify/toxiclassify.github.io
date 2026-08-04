@@ -342,6 +342,62 @@ h2 {
   background: var(--white);
 }
 
+.data-section {
+  background: var(--paper);
+}
+
+.data-heading,
+.results-heading {
+  grid-template-columns: 1.5fr 0.5fr;
+  align-items: end;
+  gap: clamp(3rem, 8vw, 8rem);
+}
+
+.data-heading > p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.figure-grid,
+.results-figure-grid {
+  margin-top: 4.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.3rem;
+}
+
+.project-figure {
+  margin: 0;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.project-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.project-figure figcaption {
+  padding: 1.3rem 1.5rem 1.5rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.project-figure figcaption strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.project-figure figcaption span {
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
 .challenge-grid {
   margin-top: 4.5rem;
   display: grid;
@@ -459,12 +515,6 @@ h2 {
   color: var(--lime);
 }
 
-.results-heading {
-  grid-template-columns: 1.5fr 0.5fr;
-  align-items: end;
-  gap: clamp(3rem, 8vw, 8rem);
-}
-
 .results-heading > p {
   margin: 0;
   color: var(--aqua);
@@ -561,6 +611,15 @@ h2 {
 
 .finding-card p {
   color: rgba(16, 42, 46, 0.75);
+}
+
+.results-figure-grid {
+  margin-top: 1.3rem;
+}
+
+.result-figure {
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .decision-grid {
@@ -763,6 +822,7 @@ footer a:focus-visible {
   }
 
   .challenge-grid,
+  .data-heading,
   .results-heading,
   .team-heading,
   .resources-section {
@@ -770,6 +830,11 @@ footer a:focus-visible {
   }
 
   .results-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .figure-grid,
+  .results-figure-grid {
     grid-template-columns: 1fr;
   }
 

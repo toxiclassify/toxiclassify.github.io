@@ -30,6 +30,7 @@
       </a>
       <nav aria-label="Primary navigation">
         <a href="#approach">Approach</a>
+        <a href="#data">Data</a>
         <a href="#results">Results</a>
         <a href="#team">Team</a>
         <a class="nav-code" href="https://github.com/toxiclassify/Main">View code</a>
@@ -95,6 +96,48 @@
             </div>
             <p>Bar widths use a 10% reference scale.</p>
           </div>
+        </div>
+      </section>
+
+      <section class="section data-section" id="data">
+        <div class="section-heading data-heading">
+          <div>
+            <p class="eyebrow">Inside the dataset</p>
+            <h2>Imbalance shapes every modeling decision</h2>
+          </div>
+          <p>
+            The frequency chart shows how little positive evidence is available for threat and identity hate. The co-occurrence matrix shows that the labels are related, but not interchangeable.
+          </p>
+        </div>
+        <div class="figure-grid">
+          <figure class="project-figure">
+            <img
+              src="assets/figures/label-imbalance.png"
+              alt="Horizontal bars showing toxic at 9.58 percent, obscene at 5.29 percent, insult at 4.94 percent, severe toxic at 1.00 percent, identity hate at 0.88 percent, and threat at 0.30 percent."
+              width="1638"
+              height="1038"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>Most labels are rare.</strong>
+              <span>Threat appears in only 0.30% of the training comments.</span>
+            </figcaption>
+          </figure>
+          <figure class="project-figure">
+            <img
+              src="assets/figures/label-cooccurrence.png"
+              alt="Heatmap showing the strongest label overlap among toxic, obscene, and insult, while threat has little overlap with other labels."
+              width="1567"
+              height="1159"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>The task is multilabel.</strong>
+              <span>Toxic, obscene, and insult often appear together, while threat is more isolated.</span>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
@@ -186,6 +229,36 @@
               Linear features capture global word evidence. Convolution filters capture local word-order patterns. The average keeps both signals without a learned stacking layer.
             </p>
           </aside>
+        </div>
+        <div class="results-figure-grid">
+          <figure class="project-figure result-figure">
+            <img
+              src="assets/figures/baseline-by-label.png"
+              alt="Heatmap of per-label ROC-AUC for Logistic Regression, Linear SVM, and Random Forest. Random Forest is weakest on threat at 0.889 and identity hate at 0.920."
+              width="1743"
+              height="940"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>Rare labels separate the baselines.</strong>
+              <span>Random Forest falls furthest behind on threat and identity hate.</span>
+            </figcaption>
+          </figure>
+          <figure class="project-figure result-figure">
+            <img
+              src="assets/figures/model-comparison.png"
+              alt="Horizontal bars comparing mean ROC-AUC. The ensemble is highest at 0.9816, followed by the CNN at 0.9780 and Logistic Regression at 0.9777."
+              width="1620"
+              height="1056"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>Different predictors combine well.</strong>
+              <span>The linear and neural probability average reaches the best recorded score.</span>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
