@@ -50,6 +50,20 @@ MODEL_NAMES = [
 ]
 MODEL_SCORES = np.array([0.9777, 0.9668, 0.9441, 0.9780, 0.9604, 0.9816])
 
+FALSE_POSITIVES_DEFAULT = np.array([1198, 607, 573, 156, 909, 510])
+FALSE_NEGATIVES_DEFAULT = np.array([516, 63, 217, 35, 237, 74])
+FALSE_POSITIVES_TUNED = np.array([553, 249, 248, 62, 499, 233])
+FALSE_NEGATIVES_TUNED = np.array([772, 129, 373, 49, 389, 113])
+
+CV_SCORES = np.array([0.9783, 0.9792, 0.9806, 0.9796, 0.9800])
+
+LENGTH_STATS = np.array(
+    [
+        [24.36, 18.00, 53.00, 64.00],
+        [31.09, 27.00, 63.00, 71.00],
+    ]
+)
+
 
 def style_axes(axis: plt.Axes) -> None:
     axis.set_facecolor(PAPER)
@@ -174,6 +188,42 @@ def plot_baseline_scores() -> None:
     save(figure, "baseline-by-label.png")
 
 
+def plot_comment_lengths() -> None:
+    figure, axis = plt.subplots(figsize=(10, 6), facecolor=PAPER)
+    style_axes(axis)
+    metrics = ["Mean", "Median", "90th percentile", "95th percentile"]
+    positions = np.arange(len(metrics))
+    width = 0.34
+    toxic = axis.bar(
+        positions - width / 2,
+        LENGTH_STATS[0],
+        width,
+        label="Toxic",
+        color=CORAL,
+    )
+    nontoxic = axis.bar(
+        positions + width / 2,
+        LENGTH_STATS[1],
+        width,
+        label="Not toxic",
+        color=AQUA,
+    )
+    axis.set_xticks(positions, metrics)
+    axis.set_ylabel("Words per comment", color=INK_SOFT)
+    axis.yaxis.grid(True, color=GRID, linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.legend(frameon=False, loc="upper left")
+    axis.bar_label(toxic, fmt="%.0f", padding=2, color=INK, fontsize=9)
+    axis.bar_label(nontoxic, fmt="%.0f", padding=2, color=INK, fontsize=9)
+    add_title(
+        figure,
+        "Comment length below the 80-word cutoff",
+        "Within this clipped view, comments marked toxic are shorter by each summary measure.",
+    )
+    figure.subplots_adjust(left=0.11, right=0.97, top=0.83, bottom=0.16)
+    save(figure, "comment-length.png")
+
+
 def plot_model_comparison() -> None:
     figure, axis = plt.subplots(figsize=(10, 6.2), facecolor=PAPER)
     style_axes(axis)
@@ -215,6 +265,56 @@ def plot_model_comparison() -> None:
     save(figure, "model-comparison.png")
 
 
+def plot_threshold_errors() -> None:
+    figure, axes = plt.subplots(1, 2, figsize=(12.5, 6.2), facecolor=PAPER)
+    positions = np.arange(len(LABELS))
+    width = 0.36
+    series = [
+        (FALSE_POSITIVES_DEFAULT, FALSE_POSITIVES_TUNED, "False positives"),
+        (FALSE_NEGATIVES_DEFAULT, FALSE_NEGATIVES_TUNED, "False negatives"),
+    ]
+    for axis, (before, after, heading) in zip(axes, series):
+        style_axes(axis)
+        axis.bar(positions - width / 2, before, width, label="0.50 cutoff", color=AQUA)
+        axis.bar(positions + width / 2, after, width, label="F1 cutoff", color=CORAL)
+        axis.set_xticks(positions, LABELS, rotation=34, ha="right")
+        axis.set_title(heading, color=INK, fontsize=12, fontweight="bold", pad=10)
+        axis.yaxis.grid(True, color=GRID, linewidth=0.8)
+        axis.set_axisbelow(True)
+    axes[0].set_ylabel("Validation comments", color=INK_SOFT)
+    axes[0].legend(frameon=False, loc="upper right")
+    add_title(
+        figure,
+        "Threshold selection changes the error balance",
+        "F1-selected cutoffs reduce false positives but increase false negatives for every label.",
+    )
+    figure.subplots_adjust(left=0.07, right=0.98, top=0.8, bottom=0.24, wspace=0.18)
+    save(figure, "threshold-errors.png")
+
+
+def plot_cv_diagnostic() -> None:
+    figure, axis = plt.subplots(figsize=(10, 5.8), facecolor=PAPER)
+    style_axes(axis)
+    positions = np.arange(1, 6)
+    bars = axis.bar(positions, CV_SCORES, color=AQUA, width=0.6)
+    mean = float(CV_SCORES.mean())
+    axis.axhline(mean, color=CORAL_DARK, linewidth=1.8, label=f"Mean {mean:.4f}")
+    axis.set_xticks(positions, [f"Fold {index}" for index in positions])
+    axis.set_ylim(0.9765, 0.9820)
+    axis.set_ylabel("Macro ROC-AUC", color=INK_SOFT)
+    axis.yaxis.grid(True, color=GRID, linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.legend(frameon=False, loc="upper left")
+    axis.bar_label(bars, fmt="%.4f", padding=3, color=INK, fontsize=9)
+    add_title(
+        figure,
+        "Stored five-fold diagnostic",
+        "These scores used a TF-IDF matrix fitted before folding, so they are not a clean CV estimate.",
+    )
+    figure.subplots_adjust(left=0.12, right=0.97, top=0.82, bottom=0.14)
+    save(figure, "cv-diagnostic.png")
+
+
 def main() -> None:
     plt.rcParams.update(
         {
@@ -226,8 +326,11 @@ def main() -> None:
     )
     plot_label_frequencies()
     plot_co_occurrence()
+    plot_comment_lengths()
     plot_baseline_scores()
     plot_model_comparison()
+    plot_threshold_errors()
+    plot_cv_diagnostic()
 
 
 if __name__ == "__main__":

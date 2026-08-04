@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -15,7 +15,9 @@
       content="Six-label toxic comment classification with TF-IDF, a 1D CNN, LightGBM, and ensembling."
     >
     <meta property="og:url" content="https://toxiclassify.github.io/">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://toxiclassify.github.io/assets/figures/model-comparison.png">
+    <meta property="og:image:alt" content="Recorded ROC-AUC comparison for six toxic comment classifiers">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="https://toxiclassify.github.io/">
     <link rel="stylesheet" href="styles.css">
     <title>Toxiclassify | Toxic comment classification</title>
@@ -32,6 +34,7 @@
         <a href="#approach">Approach</a>
         <a href="#data">Data</a>
         <a href="#results">Results</a>
+        <a href="#evidence">Evidence</a>
         <a href="#team">Team</a>
         <a class="nav-code" href="https://github.com/toxiclassify/Main">View code</a>
       </nav>
@@ -79,20 +82,20 @@
         </div>
         <div class="challenge-grid">
           <p class="section-intro">
-            Toxic comments are uncommon, and some categories are rare enough that an all-negative classifier still appears accurate. We centered evaluation on ROC-AUC, then examined per-label errors and tuned thresholds against F1.
+            Toxic comments are uncommon, and some categories are rare enough that an all-negative classifier still appears accurate. We centered evaluation on ROC-AUC, selected cutoffs by label against F1, then checked how those choices changed each error type.
           </p>
-          <div class="imbalance-panel" aria-label="Selected label frequencies">
+          <div class="imbalance-panel" role="group" aria-label="Selected label frequencies">
             <div class="frequency">
               <div class="frequency-label"><span>Toxic</span><strong>9.58%</strong></div>
-              <div class="frequency-track"><span style="width: 95.8%"></span></div>
+              <div class="frequency-track frequency-toxic"><span></span></div>
             </div>
             <div class="frequency">
               <div class="frequency-label"><span>Identity hate</span><strong>0.88%</strong></div>
-              <div class="frequency-track"><span style="width: 8.8%"></span></div>
+              <div class="frequency-track frequency-identity"><span></span></div>
             </div>
             <div class="frequency">
               <div class="frequency-label"><span>Threat</span><strong>0.30%</strong></div>
-              <div class="frequency-track"><span style="width: 3%"></span></div>
+              <div class="frequency-track frequency-threat"><span></span></div>
             </div>
             <p>Bar widths use a 10% reference scale.</p>
           </div>
@@ -106,7 +109,7 @@
             <h2>Imbalance shapes every modeling decision</h2>
           </div>
           <p>
-            The frequency chart shows how little positive evidence is available for threat and identity hate. The co-occurrence matrix shows that the labels are related, but not interchangeable.
+            The frequency chart shows how little positive evidence is available for threat and identity hate. Co-occurrence confirms that the task is multilabel. A clipped length view adds context about the text itself.
           </p>
         </div>
         <div class="figure-grid">
@@ -136,6 +139,20 @@
             <figcaption>
               <strong>The task is multilabel.</strong>
               <span>Toxic, obscene, and insult often appear together, while threat is more isolated.</span>
+            </figcaption>
+          </figure>
+          <figure class="project-figure wide">
+            <img
+              src="assets/figures/comment-length.png"
+              alt="Grouped bars showing mean, median, 90th percentile, and 95th percentile comment lengths for toxic and non-toxic comments at or below 80 words. Toxic comments are shorter for each displayed statistic."
+              width="1674"
+              height="963"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>The clipped length distributions differ.</strong>
+              <span>Among comments at or below 80 words, the toxic group has a median of 18 words and the non-toxic group has a median of 27.</span>
             </figcaption>
           </figure>
         </div>
@@ -177,7 +194,7 @@
             <h2>Different models exposed the structure of the task</h2>
           </div>
           <p>
-            The sparse linear baseline matched the CNN. Their errors differed enough that simple probability averaging raised mean ROC-AUC to 0.9816.
+            The sparse linear baseline matched the initial 128-filter CNN. Their errors differed enough that simple probability averaging raised the recorded mean ROC-AUC to 0.9816.
           </p>
         </div>
 
@@ -189,32 +206,32 @@
           >
             <div class="chart-row">
               <span class="model-name">Logistic Regression</span>
-              <div class="bar-track"><span class="bar" style="--score: 77.7%"></span></div>
+              <div class="bar-track"><span class="bar score-logreg"></span></div>
               <strong>0.9777</strong>
             </div>
             <div class="chart-row">
               <span class="model-name">Linear SVM</span>
-              <div class="bar-track"><span class="bar" style="--score: 66.8%"></span></div>
+              <div class="bar-track"><span class="bar score-svm"></span></div>
               <strong>0.9668</strong>
             </div>
             <div class="chart-row">
               <span class="model-name">Random Forest</span>
-              <div class="bar-track"><span class="bar" style="--score: 44.1%"></span></div>
+              <div class="bar-track"><span class="bar score-rf"></span></div>
               <strong>0.9441</strong>
             </div>
             <div class="chart-row">
               <span class="model-name">1D CNN</span>
-              <div class="bar-track"><span class="bar" style="--score: 78%"></span></div>
+              <div class="bar-track"><span class="bar score-cnn"></span></div>
               <strong>0.9780</strong>
             </div>
             <div class="chart-row">
               <span class="model-name">LightGBM</span>
-              <div class="bar-track"><span class="bar" style="--score: 60.4%"></span></div>
+              <div class="bar-track"><span class="bar score-lgbm"></span></div>
               <strong>0.9604</strong>
             </div>
             <div class="chart-row best">
               <span class="model-name">Ensemble</span>
-              <div class="bar-track"><span class="bar" style="--score: 81.6%"></span></div>
+              <div class="bar-track"><span class="bar score-ensemble"></span></div>
               <strong>0.9816</strong>
             </div>
             <div class="chart-axis" aria-hidden="true">
@@ -222,9 +239,9 @@
             </div>
           </div>
 
-          <aside class="finding-card">
+          <aside class="finding-card" aria-labelledby="ensemble-gain-title">
             <p class="finding-number">+0.0039</p>
-            <h3>Ensemble gain over Logistic Regression</h3>
+            <h3 id="ensemble-gain-title">Ensemble gain over Logistic Regression</h3>
             <p>
               Linear features capture global word evidence. Convolution filters capture local word-order patterns. The average keeps both signals without a learned stacking layer.
             </p>
@@ -248,7 +265,7 @@
           <figure class="project-figure result-figure">
             <img
               src="assets/figures/model-comparison.png"
-              alt="Horizontal bars comparing mean ROC-AUC. The ensemble is highest at 0.9816, followed by the CNN at 0.9780 and Logistic Regression at 0.9777."
+              alt="Horizontal bars comparing recorded mean ROC-AUC. The Logistic Regression and initial CNN average is highest at 0.9816, followed by the initial CNN at 0.9780 and Logistic Regression at 0.9777."
               width="1620"
               height="1056"
               loading="lazy"
@@ -257,6 +274,54 @@
             <figcaption>
               <strong>Different predictors combine well.</strong>
               <span>The linear and neural probability average reaches the best recorded score.</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section evidence-section" id="evidence">
+        <div class="section-heading data-heading">
+          <div>
+            <p class="eyebrow">Evidence record</p>
+            <h2>Saved scores need their experimental context</h2>
+          </div>
+          <p>
+            We reviewed the executed notebook against the old report. The revised public record keeps the saved results, fixes statements that contradicted them, and marks analyses that need a clean rerun.
+          </p>
+        </div>
+        <div class="record-note">
+          <p>
+            The model scores come from one 80/20 holdout. The old five-fold cell fitted TF-IDF before folding, and the saved Linear SVM run emitted convergence warnings. The cleaned notebook fixes both workflows, but we do not claim replacement scores without rerunning the Kaggle data.
+          </p>
+          <a href="https://github.com/toxiclassify/Main/blob/main/report/toxic_comment_classification_report.pdf">Read the corrected analysis</a>
+        </div>
+        <div class="figure-grid evidence-grid">
+          <figure class="project-figure">
+            <img
+              src="assets/figures/threshold-errors.png"
+              alt="Two grouped bar charts compare errors at a 0.50 cutoff and at F1-selected cutoffs. False positives decrease for all six labels, while false negatives increase for all six labels."
+              width="2198"
+              height="987"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>Threshold tuning changes the cost balance.</strong>
+              <span>The selected cutoffs reduce false positives, but they miss more positives for every label.</span>
+            </figcaption>
+          </figure>
+          <figure class="project-figure">
+            <img
+              src="assets/figures/cv-diagnostic.png"
+              alt="Five bars show stored fold ROC-AUC scores from 0.9783 to 0.9806 with a mean of 0.9795. A note states that TF-IDF was fitted before folding."
+              width="1689"
+              height="955"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              <strong>The stored folds are a diagnostic.</strong>
+              <span>The values are stable, but preprocessing leakage prevents using them as a clean cross-validation estimate.</span>
             </figcaption>
           </figure>
         </div>
@@ -317,7 +382,7 @@
         <div>
           <p class="eyebrow">Reproduce the work</p>
           <h2 id="resources-title">Code, notebook, and report</h2>
-          <p>The main repository includes a tested command-line baseline and the course artifacts used to record these results.</p>
+          <p>The main repository includes a tested command-line baseline, corrected notebook code, the saved evidence record, and the revised LaTeX report.</p>
         </div>
         <div class="resource-links">
           <a href="https://github.com/toxiclassify/Main">
